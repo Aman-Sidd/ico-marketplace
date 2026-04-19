@@ -33,7 +33,7 @@ const Table = ({
 
                 <Input 
                 placeholder={"Token Address"}
-                handleChange={(e)=>setTransferTokenData({...transferTokenData, address:e.target.value})}
+                handleChange={(e)=>setTransferTokenData({...transferTokenData, tokenAdd:e.target.value})}
                 />
 
                 <Input 
@@ -49,7 +49,7 @@ const Table = ({
             handleClick={()=>transferTokens(transferTokenData)}
             />
           ) : (
-            <Button name="Connect Wallet" handleChange={()=>createICOSALE(icoSale)} />
+            <Button name="Connect Wallet" handleClick={()=>connectWallet()} />
           )
         }
         </div>

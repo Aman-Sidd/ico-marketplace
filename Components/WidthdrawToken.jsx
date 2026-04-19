@@ -32,10 +32,10 @@ const WidthdrawToken = ({
                 />
 
                 <Input 
-                placeholder={tokenQuantity ? `${tokenQuantity*Number(buyIco?.price)} ${currency}` : "Output"}
+                placeholder={"Amount to Withdraw"}
                  handleChange={(e)=>setWithdrawQuantity({
                   ...withdrawQuantity,
-                  token:e.target.value
+                  amount:e.target.value
                 })}
                 />
             </div>
@@ -43,11 +43,11 @@ const WidthdrawToken = ({
             <div className="button-box" style={{marginTop:"1rem"}}>
         {
           address ? (
-            <Button name="Token Transfer"
+            <Button name="Withdraw Token"
             handleClick={()=>withdrawToken(withdrawQuantity)}
             />
           ) : (
-            <Button name="Connect Wallet" handleChange={()=>createICOSALE(icoSale)} />
+            <Button name="Connect Wallet" handleClick={()=>connectWallet()} />
           )
         }
         </div>

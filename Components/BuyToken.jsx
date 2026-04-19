@@ -41,7 +41,7 @@ const BuyToken = ({
             handleClick={()=>buyToken(buyIco?.token,tokenQuantity)}
             />
           ) : (
-            <Button name="Connect Wallet" handleChange={()=>createICOSALE(icoSale)} />
+            <Button name="Connect Wallet" handleClick={()=>connectWallet()} />
           )
         }
         </div>

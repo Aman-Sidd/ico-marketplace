@@ -56,14 +56,25 @@ const networks = {
 const changeNetwork = async({networkName})=>{
     try{
         if(!window.ethereum) throw new Error("No crypto wallet found");
-        await window.ethereum.request({
-            method:"wallet_addEthereumChain",
-            params:[
-                {
-                    ...networks[networkName],
-                },
-            ],
-        })
+        try {
+            await window.ethereum.request({
+                method: "wallet_switchEthereumChain",
+                params: [{ chainId: networks[networkName].chainId }],
+            });
+        } catch (switchError) {
+            if (switchError.code === 4902) {
+                await window.ethereum.request({
+                    method:"wallet_addEthereumChain",
+                    params:[
+                        {
+                            ...networks[networkName],
+                        },
+                    ],
+                });
+            } else {
+                throw switchError;
+            }
+        }
     } catch (error){
         console.log(error);
     }
@@ -85,9 +96,9 @@ export const getGasPrice = async (provider) => {
       maxFeePerGas: feeData.maxFeePerGas?.toString(),
     });
     
-    // Polygon Amoy requires minimum 25 Gwei priority fee
-    const minPriorityFee = ethers.utils.parseUnits("25", "gwei");
-    const minMaxFee = ethers.utils.parseUnits("35", "gwei");
+    // Polygon Amoy requires minimum 25 Gwei priority fee. Using 35 for safety.
+    const minPriorityFee = ethers.utils.parseUnits("35", "gwei");
+    const minMaxFee = ethers.utils.parseUnits("60", "gwei");
     
     return {
       maxPriorityFeePerGas: feeData.maxPriorityFeePerGas?.gt(minPriorityFee) 
@@ -100,10 +111,53 @@ export const getGasPrice = async (provider) => {
   } catch (error) {
     console.log("Error getting gas price, using defaults:", error);
     return {
-      maxPriorityFeePerGas: ethers.utils.parseUnits("25", "gwei"),
-      maxFeePerGas: ethers.utils.parseUnits("35", "gwei"),
+      maxPriorityFeePerGas: ethers.utils.parseUnits("35", "gwei"),
+      maxFeePerGas: ethers.utils.parseUnits("60", "gwei"),
     };
   }
+};
+
+export const getTransactionOverrides = async (provider, estimatedGas) => {
+  const gasLimit = estimatedGas.mul(12).div(10);
+
+  try {
+    const network = await provider.getNetwork();
+    const feeData = await provider.getFeeData();
+
+    if (network.chainId === 80002) {
+      const minPriorityFee = ethers.utils.parseUnits("35", "gwei");
+      const minMaxFee = ethers.utils.parseUnits("60", "gwei");
+
+      return {
+        gasLimit,
+        maxPriorityFeePerGas: feeData.maxPriorityFeePerGas?.gt(minPriorityFee) 
+          ? feeData.maxPriorityFeePerGas 
+          : minPriorityFee,
+        maxFeePerGas: feeData.maxFeePerGas?.gt(minMaxFee) 
+          ? feeData.maxFeePerGas 
+          : minMaxFee,
+      };
+    }
+
+    if (feeData.maxFeePerGas && feeData.maxPriorityFeePerGas) {
+      return {
+        gasLimit,
+        maxPriorityFeePerGas: feeData.maxPriorityFeePerGas,
+        maxFeePerGas: feeData.maxFeePerGas,
+      };
+    }
+
+    if (feeData.gasPrice) {
+      return {
+        gasLimit,
+        gasPrice: feeData.gasPrice,
+      };
+    }
+  } catch (error) {
+    console.log("Error preparing transaction overrides:", error);
+  }
+
+  return {gasLimit};
 };
 
 // CONTRACT
@@ -131,7 +185,7 @@ export const ICO_MARKETPLACE_CONTRACT = async()=>{
 
 export const TOKEN_CONTRACT = async(TOKEN_ADDRESS)=>{
     try{
-        const web3Modal = new web3Modal();
+        const web3Modal = new Web3Modal();
         const connection = await web3Modal.connect();
         const provider = new ethers.providers.Web3Provider(connection);
 

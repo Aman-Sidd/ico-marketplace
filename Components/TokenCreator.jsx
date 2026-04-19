@@ -52,7 +52,7 @@ const TokenCreator = ({
           address ? (
             <Button name="Create Token" handleClick={()=>createERC20(token, address, imageURL)}/>
           ) : (
-            <Button name="Connect Wallet" handleChange={()=>connectWallet()} />
+            <Button name="Connect Wallet" handleClick={()=>connectWallet()} />
           )
         }
         </div>

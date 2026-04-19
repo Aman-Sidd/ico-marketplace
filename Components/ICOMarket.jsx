@@ -1,15 +1,16 @@
 import React from "react";
+import toast from "react-hot-toast";
 import { ICO_MARKETPLACE_ADDRESS } from "../Context/constants";
 
-const ICOMarket = (
-  {array,
-    shortenAddress,
-    handleClick,
-    curreny,
+const ICOMarket = ({ title,
+  array,
+  shortenAddress,
+  handleClick,
+  currency,
 }) => {
 
-  const notifySuccess = (msg) => toast.success(msg, {duration:2000});
-  const notifyError = (msg) => toast.error(msg, {duration:2000});
+  const notifySuccess = (msg) => toast.success(msg, { duration: 2000 });
+  const notifyError = (msg) => toast.error(msg, { duration: 2000 });
 
   const copyAddress = (text) => {
     navigator.clipboard.writeText(text);
@@ -17,52 +18,46 @@ const ICOMarket = (
   }
 
   return (
-  <div className="modal">
-    <div className="modal-content">
-      <span onClick={()=>handleClick(false)
-      } className="close">
-        &times;
-      </span>
-      <h2>All ICOs You Created</h2>
-      <div className="table-container">
-        <table className="custom-table">
-        <thead>
-          <tr>
-            <td>Name</td>
-            <td>Symbol</td>
-            <td>Supply</td>
-            <td>Token</td>
-            <td>Creator</td>
-            <td>Price</td>
-          </tr>
-        </thead>
-        <tbody>
+    <div className="modal">
+      <div className="modal-content large">
+        <span onClick={() => handleClick(false)
+        } className="close">
+          &times;
+        </span>
+        <h2>{title || "ICO Marketplace"}</h2>
+        <div className="market-list">
           {
-            array.length>0 && array?.map((token, index)=>(
-              <tr key={index+1}>
-                <td onClick={()=>navigator.clipboard.writeText(token?.logo)}>
-                  <img src={token?.logo || "theblockchaincoders.jpg"} alt=""
-                  style={{
-                    width:"30px",
-                    height:"auto",
-                    borderRadius:"10px"
-                  }}
-                  />
-                </td>
-                <td>{token?.name}</td>
-                <td>{token?.symbol}</td>
-                <td>{token?.icoSaleBal}</td>
-                <td onClick={()=>copyAddress(token?.token)}>{shortenAddress(token?.token)}📋</td>
-                <td onClick={()=>copyAddress(token?.creator)}>{shortenAddress(token?.creator)}📋</td>
-                <td>{token?.price} {currency}</td>
-              </tr>
-            ))
+            array?.length > 0 ? array?.map((token, index) => (
+              <div key={index + 1} className="market-item">
+                <div className="market-header">
+                  <img src={token?.logo || "theblockchaincoders.jpg"} alt="logo" onClick={() => navigator.clipboard.writeText(token?.logo)} style={{ cursor: "pointer" }} />
+                  <div className="market-title">
+                    <h4>{token?.name}</h4>
+                    <span>{token?.symbol}</span>
+                  </div>
+                </div>
+
+                <div className="market-stats">
+                  <div className="stat-box">
+                    <p>Price</p>
+                    <h5>{token?.price} {currency}</h5>
+                  </div>
+                  <div className="stat-box">
+                    <p>Supply Available</p>
+                    <h5>{token?.icoSaleBal}</h5>
+                  </div>
+                </div>
+
+                <div className="market-actions">
+                  <p onClick={() => copyAddress(token?.token)}>Token: {shortenAddress(token?.token)} 📋</p>
+                  <p onClick={() => copyAddress(token?.creator)}>Creator: {shortenAddress(token?.creator)} 📋</p>
+                </div>
+              </div>
+            )) : <p>No ICOs found.</p>
           }
-        </tbody>
-        </table>
+        </div>
       </div>
-    </div>
-  </div>);
+    </div>);
 };
 
 export default ICOMarket;

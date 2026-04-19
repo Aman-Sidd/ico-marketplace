@@ -89,7 +89,8 @@ const Card = ({
             {feature.description}
           </p>
           <button
-            className="card-btn"
+            className="new-button"
+            style={{marginTop: "20px"}}
             onClick={() => feature.action && feature.action()}
             aria-label={feature.btnName}
           >

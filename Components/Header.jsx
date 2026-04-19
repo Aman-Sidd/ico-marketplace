@@ -45,13 +45,10 @@ const Header = ({
       <nav>
         <div className="logo">
           <a href="/">
-            <span style={{color: '#ffee55', fontWeight: 800}}>ICO.</span>
-            <span style={{marginLeft:8, color: '#fff', fontWeight:700}}>MARKET</span>
+            ICO<span>.MARKET</span>
           </a>
         </div>
 
-        <input type="checkbox" name="" id="menu-toggle" />
-        <label htmlFor='menu-toggle' className="menu-icon">&#9776;</label>
 
         <ul className="menu">
           <li><a href="/">Home</a></li>
@@ -63,12 +60,12 @@ const Header = ({
 
         <div style={{display:'flex', gap:12, alignItems:'center'}}>
           {address ? (
-            <div style={{display:'flex', gap:12, alignItems:'center'}}>
-              <div style={{padding:'6px 12px', borderRadius:20, background:'rgba(255,255,255,0.06)', border:'1px solid rgba(255,255,255,0.06)', fontWeight:700}}>
+            <div style={{display:'flex', gap: '8px', alignItems:'center'}}>
+              <div style={{padding:'8px 16px', borderRadius:'20px', background:'var(--glass-bg)', border:'1px solid var(--glass-border)', color: 'var(--text-primary)', fontWeight:600, fontSize:'0.9rem'}}>
                 {shortenAddress(address)}
               </div>
-              <div style={{padding:'6px 12px', borderRadius:20, background:'rgba(102,126,234,0.12)', color:'#fff', fontWeight:700}}>
-                {Number(accountBalance).toFixed(4)} MATIC
+              <div style={{padding:'8px 16px', borderRadius:'20px', background:'rgba(0, 229, 255, 0.1)', color:'var(--accent-cyan)', fontWeight:600, fontSize:'0.9rem'}}>
+                {Number(accountBalance).toFixed(4)} POL
               </div>
             </div>
           ) : (

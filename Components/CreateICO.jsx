@@ -37,7 +37,7 @@ const CreateICO = ({
           address ? (
             <Button name="Create ICO" handleClick={()=>createICOSALE(icoSale)}/>
           ) : (
-            <Button name="Connect Wallet" handleChange={()=>connectWallet()} />
+            <Button name="Connect Wallet" handleClick={()=>connectWallet()} />
           )
         }
         </div>

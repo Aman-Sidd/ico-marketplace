@@ -65,22 +65,24 @@ const index = () => {
 
     const [buyIco, setBuyIco] = useState();
     const copyAddress = () =>{
-      navigator.clipboard.writeToText(ICO_MARKETPLACE_ADDRESS);
+      navigator.clipboard.writeText(ICO_MARKETPLACE_ADDRESS);
       notifySuccess("Copied Successfully");
     }
 
-    // useEffect(()=>{
-    //   if(address){
-    //     GET_ALL_ICOSALE_TOKEN().then ((token)=>{
-    //       console.log("ALL ICOSALE Token from index.js",token);
-    //       setAllICOs(token);
-    //     });
-    //     GET_ALL_USER_ICOSALE_TOKEN().then((token)=>{
-    //       console.log("ALL USER ICOSALE Token from index.js",token);
-    //       setAllUserICOs(token);
-    //     })
-    //   }
-    // },[address, recall])
+    useEffect(()=>{
+      if(address){
+        const fetchTokens = async () => {
+          const allTokens = await GET_ALL_ICOSALE_TOKEN();
+          console.log("ALL ICOSALE Token from index.js", allTokens);
+          setAllICOs(allTokens);
+          
+          const userTokens = await GET_ALL_USER_ICOSALE_TOKEN();
+          console.log("ALL USER ICOSALE Token from index.js", userTokens);
+          setAllUserICOs(userTokens);
+        };
+        fetchTokens();
+      }
+    },[address, recall])
 
   return <div>
     <Header 
@@ -134,12 +136,13 @@ const index = () => {
       setOpenICOMarketplace={setOpenICOMarketplace}
       copyAddress={copyAddress}
       setOpenCreateICO={setOpenCreateICO}
+      setOpenWithdrawToken={setOpenWithdrawToken}
       />
     </div>
-    {openAllICO && <ICOMarket array={allUserICOs}
+    {openAllICO && <ICOMarket title="Your Created ICOs" array={allUserICOs}
     shortenAddress={shortenAddress}
     handleClick={setOpenAllICO}
-    curreny={currency}/>}
+    currency={currency}/>}
     {openTokenCreator && 
     <TokenCreator 
       createERC20={createERC20}
@@ -164,10 +167,10 @@ const index = () => {
     createICOSALE={createICOSALE} 
     />}
     {openICOMarketplace && 
-    <ICOMarket array={allICOs}
+    <ICOMarket title="ICO Marketplace" array={allICOs}
     shortenAddress={shortenAddress}
     handleClick={setOpenICOMarketplace}
-    curreny={currency}/>
+    currency={currency}/>
     }
     {openBuyToken && 
     <BuyToken
